@@ -41,7 +41,7 @@ namespace SudokuSolver
                         //If value is erased, reset possibilites to all
                         if(tmp==0)
                         {
-                            Sudoku.getSudoku().cells[i, j].possible.RemoveAll(x => 1.Equals(1));
+                            Sudoku.getSudoku().cells[i, j].possible.Clear();
                             for(int k = 1; k<10; k++)
                             {
                                 Sudoku.getSudoku().cells[i, j].possible.Add(k);
@@ -51,7 +51,9 @@ namespace SudokuSolver
                     }
                     catch (Exception)
                     {
-                        MessageBox.Show("Wrong format");
+                        MessageBox.Show("Wrong format: " + sudoku_dgv.Rows[i].Cells[j].Value);
+                        sudoku_dgv.Rows[i].Cells[j].Value = 0;
+                        return;
                     }
                 }
             }
@@ -71,7 +73,7 @@ namespace SudokuSolver
                         if (val != 0)
                             sudoku_dgv.Rows[i].Cells[j].Value = val;
                         else
-                            sudoku_dgv.Rows[i].Cells[j].Value = "";
+                            sudoku_dgv.Rows[i].Cells[j].Value = null;
                     }
                 }
             }

@@ -48,7 +48,9 @@ namespace SudokuSolver
                         if (val == 0)
                             break;
                         if (val == getSudoku().cells[i, column].value)
+                        {
                             return false;
+                        }
                     }
                 }
             }
@@ -110,6 +112,7 @@ namespace SudokuSolver
         {
             possColumn();
             possRow();
+            possQuadrant();
         }
         public void possColumn()
         {
@@ -136,8 +139,9 @@ namespace SudokuSolver
                         if(count == 1)
                         {
                             cells[row, column].value = poss;
-                            cells[row, column].possible.RemoveAll(x => 1.Equals(1));
+                            cells[row, column].possible.Clear();
                             cells[row, column].possible.Add(poss);
+                            cells[row, column].check();
                             break;
                         }
                     }
@@ -169,8 +173,9 @@ namespace SudokuSolver
                         if (count == 1)
                         {
                             cells[row, column].value = poss;
-                            cells[row, column].possible.RemoveAll(x => 1.Equals(1));
+                            cells[row, column].possible.Clear();
                             cells[row, column].possible.Add(poss);
+                            cells[row, column].check();
                             break;
                         }
                     }
@@ -179,7 +184,39 @@ namespace SudokuSolver
         }
         public void possQuadrant()
         {
-
+            for (int quadrantRow = 0; quadrantRow < 3; quadrantRow++)
+            {
+                for (int quadrantColumn = 0; quadrantColumn < 3; quadrantColumn++)
+                {
+                    List<int> possible = new List<int>();
+                    for (int row = 0; row < 3; row++)
+                    {
+                        for (int column = 0; column < 3; column++)
+                        {
+                            possible.AddRange(cells[quadrantRow * 3 + row, quadrantColumn * 3 + column].possible);
+                        }
+                    }
+                    for (int row = 0; row < 3; row++)
+                    {
+                        for (int column = 0; column < 3; column++)
+                        {
+                            foreach (int pos in cells[quadrantRow * 3 + row, quadrantColumn * 3 + column].possible)
+                            {
+                                //If there is only one set the value to the unique possibility
+                                int count = possible.Where(x => x.Equals(pos)).Count();
+                                if (count == 1)
+                                {
+                                    cells[quadrantRow * 3 + row, quadrantColumn * 3 + column].value = pos;
+                                    cells[quadrantRow * 3 + row, quadrantColumn * 3 + column].possible.Clear();
+                                    cells[quadrantRow * 3 + row, quadrantColumn * 3 + column].possible.Add(pos);
+                                    cells[quadrantRow * 3 + row, quadrantColumn * 3 + column].check();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
