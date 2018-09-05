@@ -18,6 +18,7 @@ namespace SudokuSolver
             sudoku_dgv.ColumnCount = 9;
             sudoku_dgv.RowCount = 9;
             Sudoku sudoku =  Sudoku.getSudoku();
+            //Initialize cells
             for(int i = 0; i < 9; i++)
             {
                 for(int j = 0; j < 9; j++)
@@ -41,52 +42,55 @@ namespace SudokuSolver
                         //If value is erased, reset possibilites to all
                         if(tmp==0)
                         {
-                            Sudoku.getSudoku().cells[i, j].possible.Clear();
-                            for(int k = 1; k<10; k++)
-                            {
-                                Sudoku.getSudoku().cells[i, j].possible.Add(k);
-                            }
+                            Sudoku.getSudoku().cells[i, j].possible = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+                            continue;
+                        }
+                        if(tmp<0 || tmp>9)
+                        {
+                            throw new Exception();
                         }
                         Sudoku.getSudoku().cells[i, j].value = tmp;
+                        sudoku_dgv.Rows[i].Cells[j].Style.BackColor = Color.DarkGray;
                     }
                     catch (Exception)
                     {
                         MessageBox.Show("Wrong format: " + sudoku_dgv.Rows[i].Cells[j].Value);
-                        sudoku_dgv.Rows[i].Cells[j].Value = 0;
+                        sudoku_dgv.Rows[i].Cells[j].Value = null;
                         return;
                     }
                 }
             }
+            //Check if the numbers inputed are correct
             if (!Sudoku.getSudoku().validate())
             {
                 MessageBox.Show("Wrong values");
                 return;
             }
-            for (int n = 0; n < 10; n++)
+            solve(0);
+            drawSudoku();
+            updateProgressBar();
+        }
+
+        private void solve(int sig)
+        {
+            int signature = Sudoku.getSudoku().signature();
+            int newSignature = 10;
+            while(signature != newSignature)
             {
-                for (int i = 0; i < 9; i++)
-                {
-                    for (int j = 0; j < 9; j++)
-                    {
-                        Sudoku.getSudoku().cells[i, j].check();
-                        int val = Sudoku.getSudoku().cells[i, j].value;
-                        if (val != 0)
-                            sudoku_dgv.Rows[i].Cells[j].Value = val;
-                        else
-                            sudoku_dgv.Rows[i].Cells[j].Value = null;
-                    }
-                }
+                signature = Sudoku.getSudoku().signature();
+                Sudoku.getSudoku().check();
+                newSignature = Sudoku.getSudoku().signature();
             }
-            Sudoku.getSudoku().possible();
-            for (int i = 0; i < 9; i++)
+            if (newSignature == sig)
+                return;
+            signature = 0;
+            while(signature != newSignature)
             {
-                for (int j = 0; j < 9; j++)
-                {
-                    int val = Sudoku.getSudoku().cells[i, j].value;
-                    if (val != 0)
-                        sudoku_dgv.Rows[i].Cells[j].Value = val;
-                }
+                signature = Sudoku.getSudoku().signature();
+                Sudoku.getSudoku().possible();
+                newSignature = Sudoku.getSudoku().signature();
             }
+            solve(newSignature);
         }
 
         private void sudoku_dgv_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -97,6 +101,54 @@ namespace SudokuSolver
                 s += (x + ", ");
             }
             posValues_lbl.Text = s;
+        }
+
+        void drawSudoku()
+        {
+            Sudoku s = Sudoku.getSudoku();
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    int val = s.cells[i, j].value;
+                    if (val != 0)
+                        sudoku_dgv.Rows[i].Cells[j].Value = val;
+                    else
+                        sudoku_dgv.Rows[i].Cells[j].Value = null;
+                }
+            }
+        }
+
+        void updateProgressBar()
+        {
+            int filledCells = 0;
+            Sudoku sudoku = Sudoku.getSudoku();
+            for(int row = 0; row < 9; row++)
+            {
+                for(int col = 0; col < 9; col++)
+                {
+                    if (sudoku.cells[row, col].value != 0)
+                        filledCells++;
+                }
+            }
+            progress_pb.Value = (filledCells * 100) / 81;
+        }
+
+        private void reset_btn_MouseClick(object sender, MouseEventArgs e)
+        {
+            Sudoku.reset();
+            drawSudoku();
+        }
+
+        private void reset_pos_btn_MouseClick(object sender, MouseEventArgs e)
+        {
+            for(int row = 0; row<9; row++)
+            {
+                for(int col = 0; col <9; col++)
+                {
+                    Sudoku.getSudoku().cells[row, col].possible = new List<int>() {1, 2, 3, 4, 5, 6, 7, 8, 9 };
+                }
+            }
         }
     }
 }

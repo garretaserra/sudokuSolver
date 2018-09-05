@@ -12,7 +12,18 @@ namespace SudokuSolver
         private static Sudoku sudoku = null;
 
         private Sudoku (){}
-
+        public static Sudoku reset()
+        {
+            sudoku = new Sudoku();
+            for(int row = 0; row<9; row++)
+            {
+                for(int col = 0; col < 9; col++)
+                {
+                    sudoku.cells[row, col] = new Cell();
+                }
+            }
+            return sudoku;
+        }
         public void setPositions()
         {
             //Set the row and column of each cell
@@ -24,14 +35,30 @@ namespace SudokuSolver
                 }
             }
         }
-
         public static Sudoku getSudoku()
         {
             if (sudoku == null)
                 sudoku = new Sudoku();
             return sudoku;
         }
+        public int signature()
+        {
+            int count = 0;
+            for(int row = 0; row < 9; row++)
+            {
+                for(int col = 0; col <9; col++)
+                {
+                    count += cells[row, col].value * 1000;
+                    foreach(int pos in cells[row, col].possible)
+                    {
+                        count += pos;
+                    }
+                }
+            }
+            return count;
+        }
 
+        //Validation if values are consistent with Sudoku rules
         public bool validate()
         {
             return validateColumns() && validateRows() && validateQuadrants();
@@ -108,13 +135,14 @@ namespace SudokuSolver
             return true;
         }
 
+        //Check if a unique possible values exist within a set
         public void possible()
         {
             possColumn();
             possRow();
             possQuadrant();
         }
-        public void possColumn()
+        private void possColumn()
         {
             for(int column = 0; column < 9; column++)
             {
@@ -148,7 +176,7 @@ namespace SudokuSolver
                 }
             }
         }
-        public void possRow()
+        private void possRow()
         {
             for (int row = 0; row < 9; row++)
             {
@@ -182,7 +210,7 @@ namespace SudokuSolver
                 }
             }
         }
-        public void possQuadrant()
+        private void possQuadrant()
         {
             for (int quadrantRow = 0; quadrantRow < 3; quadrantRow++)
             {
@@ -215,6 +243,105 @@ namespace SudokuSolver
                             }
                         }
                     }
+                }
+            }
+        }
+
+        //Check if 2 values have to be in 2 cells and remove from possibility in the other cells in set
+        private void pos2(List<Cell> cells)
+        {
+            //Iterate over all 2 number possibilities
+            for(int pos1 = 1; pos1 < 10; pos1++)
+            {
+                for(int pos2 = 1; pos2 < 10; pos2++)
+                {
+                    //Check if there are 2 cells with only these possibilities
+                    int count = 0;
+                    foreach(Cell cell in cells.Where(x => x.possible.Count.Equals(2)))
+                    {
+                        if (cell.possible.Except(new List<int>() { pos1, pos2 }).Count() == 0)
+                            count++;
+                    }
+                    //Check if there are 2 cells
+                    if(count == 2)
+                    {
+                        //Remove posibilities from other cells
+                        foreach(Cell cell in cells)
+                        {
+                            if (cell.possible.Except(new List<int>() { pos1, pos2 }).Count() == 0)
+                                continue;
+                            else
+                            {
+                                cell.possible.Remove(pos1);
+                                cell.possible.Remove(pos2);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        //Get the cells in a set in the sudoku that are not set final
+        public void sets()
+        {
+            //Check Rows
+            for(int row = 0; row < 9; row++)
+            {
+                List<Cell> list = new List<Cell>();
+                for (int col = 0; col < 9; col++)
+                {
+                    Cell tmp = cells[row, col];
+                    if (tmp.value == 0)
+                    {
+                        list.Add(tmp);
+                    }
+                }
+                pos2(list);
+            }
+            //Check Columns
+            for(int col = 0; col <9; col++)
+            {
+                List<Cell> list = new List<Cell>();
+                for (int row = 0; row < 9; row++)
+                {
+                    Cell tmp = cells[row, col];
+                    if (tmp.value == 0)
+                    {
+                        list.Add(tmp);
+                    }
+                }
+                pos2(list);
+            }
+            //Check Quadrants
+            for(int initrow = 0; initrow < 3; initrow++)
+            {
+                for(int initcol = 0; initcol < 3; initcol++)
+                {
+                    List<Cell> list = new List<Cell>();
+                    for(int row = 0; row < 3; row++)
+                    {
+                        for(int col = 0; col < 3; col++)
+                        {
+                            Cell tmp = cells[initrow * 3 + row, initcol * 3 + col];
+                            if(tmp.value == 0)
+                            {
+                                list.Add(tmp);
+                            }
+                        }
+                    }
+                    pos2(list);
+                }
+            }
+        }
+
+        //Check all cells in the Sudoku
+        public void check()
+        {
+            for(int row = 0; row < 9; row++)
+            {
+                for(int col = 0; col < 9; col++)
+                {
+                    cells[row, col].check();
                 }
             }
         }

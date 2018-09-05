@@ -46,7 +46,7 @@ namespace SudokuSolver
 
         }
 
-        public void checkRow()
+        private void checkRow()
         {
             for(int x = 0; x < 9; x++)
             {
@@ -56,7 +56,7 @@ namespace SudokuSolver
             }
         }
 
-        public void checkColumn()
+        private void checkColumn()
         {
             for (int x = 0; x < 9; x++)
             {
@@ -66,7 +66,7 @@ namespace SudokuSolver
             }
         }
 
-        public void checkQuadrant()
+        private void checkQuadrant()
         {
             int initialx = (row / 3) * 3;
             int initialy = (column / 3) * 3;
