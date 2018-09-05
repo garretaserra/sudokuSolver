@@ -11,7 +11,12 @@ namespace SudokuSolver
         public List<int> possible = new List<int>();
         public int row;
         public int column;
-        public int value = 0;
+        private int value = 0;
+
+        public int getvalue() { return this.value; }
+        public void setvalue(int value) { this.value = value; }
+
+
 
         public Cell()
         {

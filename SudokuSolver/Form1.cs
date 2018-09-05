@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace SudokuSolver
 {
@@ -49,8 +50,8 @@ namespace SudokuSolver
                         {
                             throw new Exception();
                         }
-                        Sudoku.getSudoku().cells[i, j].value = tmp;
-                        sudoku_dgv.Rows[i].Cells[j].Style.BackColor = Color.DarkGray;
+                        Sudoku.getSudoku().cells[i, j].setvalue(tmp);
+                        sudoku_dgv.Rows[i].Cells[j].Style.BackColor = Color.LightGray;
                     }
                     catch (Exception)
                     {
@@ -66,31 +67,39 @@ namespace SudokuSolver
                 MessageBox.Show("Wrong values");
                 return;
             }
-            solve(0);
+            solve();
             drawSudoku();
-            updateProgressBar();
         }
 
-        private void solve(int sig)
+        private void solve()
         {
             int signature = Sudoku.getSudoku().signature();
-            int newSignature = 10;
-            while(signature != newSignature)
-            {
-                signature = Sudoku.getSudoku().signature();
-                Sudoku.getSudoku().check();
-                newSignature = Sudoku.getSudoku().signature();
-            }
-            if (newSignature == sig)
+            Sudoku.getSudoku().check();
+            drawSudoku();
+            if (signature == Sudoku.getSudoku().signature())
+                possible();
+            else
+                solve();
+        }
+        private void possible()
+        {
+            int signature = Sudoku.getSudoku().signature();
+            Sudoku.getSudoku().possible();
+            drawSudoku();
+            if (signature == Sudoku.getSudoku().signature())
+                sets();
+            else
+                solve();
+        }
+        private void sets()
+        {
+            int signature = Sudoku.getSudoku().signature();
+            Sudoku.getSudoku().sets();
+            drawSudoku();
+            if (signature == Sudoku.getSudoku().signature())
                 return;
-            signature = 0;
-            while(signature != newSignature)
-            {
-                signature = Sudoku.getSudoku().signature();
-                Sudoku.getSudoku().possible();
-                newSignature = Sudoku.getSudoku().signature();
-            }
-            solve(newSignature);
+            else
+                solve();
         }
 
         private void sudoku_dgv_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -100,7 +109,7 @@ namespace SudokuSolver
             {
                 s += (x + ", ");
             }
-            posValues_lbl.Text = s;
+            posvalues_lbl.Text = s;
         }
 
         void drawSudoku()
@@ -110,13 +119,14 @@ namespace SudokuSolver
             {
                 for (int j = 0; j < 9; j++)
                 {
-                    int val = s.cells[i, j].value;
+                    int val = s.cells[i, j].getvalue();
                     if (val != 0)
                         sudoku_dgv.Rows[i].Cells[j].Value = val;
                     else
                         sudoku_dgv.Rows[i].Cells[j].Value = null;
                 }
             }
+            updateProgressBar();
         }
 
         void updateProgressBar()
@@ -127,7 +137,7 @@ namespace SudokuSolver
             {
                 for(int col = 0; col < 9; col++)
                 {
-                    if (sudoku.cells[row, col].value != 0)
+                    if (sudoku.cells[row, col].getvalue() != 0)
                         filledCells++;
                 }
             }
@@ -138,6 +148,13 @@ namespace SudokuSolver
         {
             Sudoku.reset();
             drawSudoku();
+            for(int row = 0; row < 9; row++)
+            {
+                for(int col = 0; col < 9; col++)
+                {
+                    sudoku_dgv.Rows[row].Cells[col].Style.BackColor = Color.White;
+                }
+            }
         }
 
         private void reset_pos_btn_MouseClick(object sender, MouseEventArgs e)

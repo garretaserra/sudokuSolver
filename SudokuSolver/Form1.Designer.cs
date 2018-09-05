@@ -32,7 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.sudoku_dgv = new System.Windows.Forms.DataGridView();
             this.solve_btn = new System.Windows.Forms.Button();
-            this.posValues_lbl = new System.Windows.Forms.Label();
+            this.posvalues_lbl = new System.Windows.Forms.Label();
             this.progress_pb = new System.Windows.Forms.ProgressBar();
             this.reset_pos_btn = new System.Windows.Forms.Button();
             this.reset_btn = new System.Windows.Forms.Button();
@@ -80,14 +80,14 @@
             this.solve_btn.UseVisualStyleBackColor = true;
             this.solve_btn.Click += new System.EventHandler(this.solve_btn_Click);
             // 
-            // posValues_lbl
+            // posvalues_lbl
             // 
-            this.posValues_lbl.AutoSize = true;
-            this.posValues_lbl.Location = new System.Drawing.Point(543, 195);
-            this.posValues_lbl.Name = "posValues_lbl";
-            this.posValues_lbl.Size = new System.Drawing.Size(81, 13);
-            this.posValues_lbl.TabIndex = 2;
-            this.posValues_lbl.Text = "Possible Values";
+            this.posvalues_lbl.AutoSize = true;
+            this.posvalues_lbl.Location = new System.Drawing.Point(543, 195);
+            this.posvalues_lbl.Name = "posvalues_lbl";
+            this.posvalues_lbl.Size = new System.Drawing.Size(81, 13);
+            this.posvalues_lbl.TabIndex = 2;
+            this.posvalues_lbl.Text = "Possible values";
             // 
             // progress_pb
             // 
@@ -124,7 +124,7 @@
             this.Controls.Add(this.reset_btn);
             this.Controls.Add(this.reset_pos_btn);
             this.Controls.Add(this.progress_pb);
-            this.Controls.Add(this.posValues_lbl);
+            this.Controls.Add(this.posvalues_lbl);
             this.Controls.Add(this.solve_btn);
             this.Controls.Add(this.sudoku_dgv);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -143,7 +143,7 @@
 
         private System.Windows.Forms.DataGridView sudoku_dgv;
         private System.Windows.Forms.Button solve_btn;
-        private System.Windows.Forms.Label posValues_lbl;
+        private System.Windows.Forms.Label posvalues_lbl;
         private System.Windows.Forms.ProgressBar progress_pb;
         private System.Windows.Forms.Button reset_pos_btn;
         private System.Windows.Forms.Button reset_btn;

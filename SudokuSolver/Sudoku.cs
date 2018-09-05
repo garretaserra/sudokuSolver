@@ -48,7 +48,7 @@ namespace SudokuSolver
             {
                 for(int col = 0; col <9; col++)
                 {
-                    count += cells[row, col].value * 1000;
+                    count += cells[row, col].getvalue() * 1000;
                     foreach(int pos in cells[row, col].possible)
                     {
                         count += pos;
@@ -71,10 +71,10 @@ namespace SudokuSolver
                 {
                     for (int i = 0; i < 9 && i != row; i++)
                     { 
-                        int val = getSudoku().cells[row, column].value;
+                        int val = getSudoku().cells[row, column].getvalue();
                         if (val == 0)
                             break;
-                        if (val == getSudoku().cells[i, column].value)
+                        if (val == getSudoku().cells[i, column].getvalue())
                         {
                             return false;
                         }
@@ -91,10 +91,10 @@ namespace SudokuSolver
                 {
                     for (int i = 0; i < 9 && i != column; i++)
                     {
-                        int val = getSudoku().cells[row, column].value;
+                        int val = getSudoku().cells[row, column].getvalue();
                         if (val == 0)
                             break;
-                        if (val == getSudoku().cells[row, i].value)
+                        if (val == getSudoku().cells[row, i].getvalue())
                             return false;
                     }
                 }
@@ -118,11 +118,11 @@ namespace SudokuSolver
                                     //Check for same cell
                                     if (x == row && y == column)
                                         continue;
-                                    if (getSudoku().cells[quadrantRow * 3 + row, quadrantColumn * 3 + column].value == 0)
+                                    if (getSudoku().cells[quadrantRow * 3 + row, quadrantColumn * 3 + column].getvalue() == 0)
                                         break;
                                     //check same value
-                                    if(getSudoku().cells[quadrantRow*3+row,quadrantColumn*3+column].value
-                                        == getSudoku().cells[quadrantRow*3+x, quadrantColumn*3+y].value)
+                                    if(getSudoku().cells[quadrantRow*3+row,quadrantColumn*3+column].getvalue()
+                                        == getSudoku().cells[quadrantRow*3+x, quadrantColumn*3+y].getvalue())
                                     {
                                         return false;
                                     }
@@ -150,14 +150,14 @@ namespace SudokuSolver
                 //Add all possible elements of column from all cells in one list
                 for(int row = 0; row < 9; row++)
                 {
-                    if (cells[row, column].value != 0)
+                    if (cells[row, column].getvalue() != 0)
                         continue;
                     possible.AddRange(cells[row, column].possible);
                 }
                 //Check if there is only one possibility
                 for (int row = 0; row < 9; row++)
                 {
-                    int val = cells[row, column].value;
+                    int val = cells[row, column].getvalue();
                     if (val != 0)
                         continue;
                     foreach (int poss in cells[row, column].possible)
@@ -166,7 +166,7 @@ namespace SudokuSolver
                         int count = possible.Where(x => x.Equals(poss)).Count();
                         if(count == 1)
                         {
-                            cells[row, column].value = poss;
+                            cells[row, column].setvalue(poss);
                             cells[row, column].possible.Clear();
                             cells[row, column].possible.Add(poss);
                             cells[row, column].check();
@@ -184,14 +184,14 @@ namespace SudokuSolver
                 //Add all possible elements of row from all cells in one list
                 for (int column = 0; column < 9; column++)
                 {
-                    if (cells[row, column].value != 0)
+                    if (cells[row, column].getvalue() != 0)
                         continue;
                     possible.AddRange(cells[row, column].possible);
                 }
                 //Check if there is only one possibility
                 for (int column = 0; column < 9; column++)
                 {
-                    int val = cells[row, column].value;
+                    int val = cells[row, column].getvalue();
                     if (val != 0)
                         continue;
                     foreach (int poss in cells[row, column].possible)
@@ -200,7 +200,7 @@ namespace SudokuSolver
                         int count = possible.Where(x => x.Equals(poss)).Count();
                         if (count == 1)
                         {
-                            cells[row, column].value = poss;
+                            cells[row, column].setvalue(poss);
                             cells[row, column].possible.Clear();
                             cells[row, column].possible.Add(poss);
                             cells[row, column].check();
@@ -234,7 +234,7 @@ namespace SudokuSolver
                                 int count = possible.Where(x => x.Equals(pos)).Count();
                                 if (count == 1)
                                 {
-                                    cells[quadrantRow * 3 + row, quadrantColumn * 3 + column].value = pos;
+                                    cells[quadrantRow * 3 + row, quadrantColumn * 3 + column].setvalue(pos);
                                     cells[quadrantRow * 3 + row, quadrantColumn * 3 + column].possible.Clear();
                                     cells[quadrantRow * 3 + row, quadrantColumn * 3 + column].possible.Add(pos);
                                     cells[quadrantRow * 3 + row, quadrantColumn * 3 + column].check();
@@ -291,7 +291,7 @@ namespace SudokuSolver
                 for (int col = 0; col < 9; col++)
                 {
                     Cell tmp = cells[row, col];
-                    if (tmp.value == 0)
+                    if (tmp.getvalue() == 0)
                     {
                         list.Add(tmp);
                     }
@@ -305,7 +305,7 @@ namespace SudokuSolver
                 for (int row = 0; row < 9; row++)
                 {
                     Cell tmp = cells[row, col];
-                    if (tmp.value == 0)
+                    if (tmp.getvalue() == 0)
                     {
                         list.Add(tmp);
                     }
@@ -323,7 +323,7 @@ namespace SudokuSolver
                         for(int col = 0; col < 3; col++)
                         {
                             Cell tmp = cells[initrow * 3 + row, initcol * 3 + col];
-                            if(tmp.value == 0)
+                            if(tmp.getvalue() == 0)
                             {
                                 list.Add(tmp);
                             }
